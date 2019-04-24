@@ -1,0 +1,211 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5模拟微信聊天界面</title>
+  <style>
+    /**重置标签默认样式*/
+      * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-family: "微软雅黑";
+      }
+      body {
+        overflow: hidden;
+      }
+      #container {
+        width: 450px;
+        height: 580px;
+        background: #eee;
+        margin: 20px auto 0;
+        position: relative;
+        box-shadow: 20px 20px 55px #777;
+      }
+      .header {
+        background: #000;
+        height: 40px;
+        color: #fff;
+        line-height: 34px;
+        font-size: 20px;
+        padding: 0 10px;
+      }
+      .footer {
+        width: 430px;
+        height: 50px;
+        background: #666;
+        position: absolute;
+        bottom: 0;
+        padding: 10px;
+      }
+      .footer input {
+        width: 275px;
+        height: 45px;
+        outline: none;
+        font-size: 20px;
+        text-indent: 10px;
+        position: absolute;
+        border-radius: 6px;
+        right: 80px;
+      }
+      .footer span {
+        display: inline-block;
+        width: 62px;
+        height: 48px;
+        background: #ccc;
+        font-weight: 900;
+        line-height: 45px;
+        cursor: pointer;
+        text-align: center;
+        position: absolute;
+        right: 10px;
+        border-radius: 6px;
+      }
+      .footer span:hover {
+        color: #fff;
+        background: #999;
+      }
+      #user_face_icon {
+        display: inline-block;
+        background: red;
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        position: absolute;
+        bottom: 6px;
+        left: 14px;
+        cursor: pointer;
+        overflow: hidden;
+      }
+      img {
+        width: 60px;
+        height: 60px;
+      }
+      .content {
+        font-size: 20px;
+        width: 435px;
+        height: 462px;
+        overflow: auto;
+        padding: 5px;
+      }
+      .content li {
+        margin-top: 10px;
+        padding-left: 10px;
+        width: 412px;
+        display: block;
+        clear: both;
+        overflow: hidden;
+      }
+      .content li img {
+        float: left;
+      }
+      .content li span {
+        background: #7cfc00;
+        padding: 10px;
+        border-radius: 10px;
+        float: left;
+        margin: 6px 10px 0 10px;
+        max-width: 310px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 3px #ccc;
+      }
+      .content li img.imgleft {
+        float: left;
+      }
+      .content li img.imgright {
+        float: right;
+      }
+      .content li span.spanleft {
+        float: left;
+        background: #fff;
+      }
+      .content li span.spanright {
+        float: right;
+        background: #7cfc00;
+      }
+    </style>
+</head>
+
+<body>
+
+  <div id="container">
+
+    <div class="header">
+      <span style="float: left;">图灵机器人</span>
+      <span style="float: right;">今天</span>
+    </div>
+
+    <ul class="content">
+      <!-- <li><img src="./img/boy.png" class="imgright"><span class="spanright">你好</span></li>
+      <li><img src="./img/girl.png" class="imgleft"><span class="spanleft">你好你好你最好</span></li> -->
+    </ul>
+
+    <div class="footer">
+      <div id="user_face_icon"><img src="D:/素材/Camera Roll/SheldonIcon.jpg" alt=""></div>
+      <input id="text" type="text" placeholder="说点什么吧...">
+      <span id="btn">发送</span>
+    </div>
+
+  </div>
+<!-- 
+1.自己发的消息在右边，创建li标签的类为imgright
+1.别人发的消息在右边，创建li标签的类为imgleft
+ -->
+
+ <!-- c34c7a59d84b49a791e9820947f74148 -->
+<script>
+  //获取元素
+  var btn = document.getElementById('btn');
+  var content = document.getElementsByTagName('ul')[0];
+  var msg = document.getElementById('text');
+
+  //注册点击事件
+  btn.onclick = function () {
+    //获取文本内容，做非空判断
+    if (msg.value == "") return;
+
+    //创建自己的对话记录
+    var li = '<li><img src ="./SheldonIcon.jpg" class= "imgright"><span class = "spanright">' + msg.value + '</span></li>';  
+
+    //将创建的li添加到div中
+    content.innerHTML += li;
+
+    //发送Ajax请求
+    var xhr = new XMLHttpRequest;
+    xhr.open('post','http://www.tuling123.com/openapi/api');
+    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.send('userid=42342&key=c34c7a59d84b49a791e9820947f74148&info=' + msg.value);
+
+    msg.value = "";
+
+    //监听响应完成
+    xhr.onreadystatechange  = function(e){
+      if (xhr.readyState == 4 & xhr.status == 200 ) {
+        //获取到的是json，需转化
+        var obj = JSON.parse(xhr.responseText);
+
+        //为机器人创建Li
+        var robot = '<li><img src ="./same05.jpg" class= "imgleft"><span class = "spanleft">' + obj.text + '</span></li>';
+
+        //add to div
+        content.innerHTML += robot;
+
+        //让聊天内容自动滚动
+        content.scrollTop = content.scrollHeight;
+      }
+    }
+
+  }
+    //设置按键事件
+    msg.onkeydown = function (e) {
+      e = e || window.event;
+
+      if (e.keyCode == 13) {
+        btn.onclick();
+      }
+    }
+</script>
+
+</body>
+
+</html>
